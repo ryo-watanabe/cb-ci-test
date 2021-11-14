@@ -2,36 +2,38 @@ version: 0.2
 phases:
   install:
     commands:
-      - echo ----install start!---
       - apk add --no-cache curl wget
+      - echo "----start docker---"
       - nohup /usr/local/bin/dockerd --host=unix:///var/run/docker.sock --host=tcp://127.0.0.1:2375 --storage-driver=overlay&
       - timeout 30 sh -c "until docker info; do echo .; sleep 1; done"
+      - echo "----login to registry---"
       - aws ecr get-login-password | docker login --username AWS --password-stdin $REGISTRY
+      - echo "----install & config kubectl---"
       - wget https://storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/linux/amd64/kubectl
       - mv kubectl /usr/local/bin/kubectl
       - chmod +x /usr/local/bin/kubectl
       - aws eks --region $REGION update-kubeconfig --name $CLUSTER
   pre_build:
     commands:
-      - echo ----build start!---
+      - echo "----build images---"
       - docker-compose -f docker-compose.yml build
   build:
     commands:
-      - echo ----integration test start!---
+      - echo "----integration test---"
       - docker-compose -f docker-compose.yml up -d
       ### -r = retries; -i = interval; -k = keyword to search for ###
       - sh ./test/test-connection.sh -r 20 -i 3 -u http://localhost:3000
       - sh ./test/test-content.sh -r 20 -i 3 -u http://localhost:3000 -k 'Chocolate Chip'
   post_build:
     commands:
-      - echo Build completed on `date`
-      - echo Pushing the Docker image...
+      - echo "----pushing images----"
       - docker tag app $REGISTRY/cb-ci-test:latest
       - docker tag app $REGISTRY/cb-ci-test:$TAG
       - docker tag app $REGISTRY/cb-ci-test:$CODEBUILD_RESOLVED_SOURCE_VERSION
       - docker push -a $REGISTRY/cb-ci-test
       - docker tag db $REGISTRY/cb-ci-db:latest
       - docker push -a $REGISTRY/cb-ci-db
+      - echo "----update deployment----"
       - sed -i "s/IMAGE_TAG/$CODEBUILD_RESOLVED_SOURCE_VERSION/g" deploy.yml
       - kubectl apply -f deploy.yml
-      - echo "done"
+      - echo "----done----"
