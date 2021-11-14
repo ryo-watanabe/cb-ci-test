@@ -20,7 +20,7 @@ spec:
         name: cb-ci-test
         ports:
         - containerPort: 3000
-      - image: 030793377707.dkr.ecr.ap-northeast-1.amazonaws.com/cb-ci-db:IMAGE_TAG
+      - image: 030793377707.dkr.ecr.ap-northeast-1.amazonaws.com/cb-ci-db:latest
         imagePullPolicy: Always
         name: cb-ci-db
         env:
