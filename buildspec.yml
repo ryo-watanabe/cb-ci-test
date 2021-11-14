@@ -7,7 +7,6 @@ phases:
       - nohup /usr/local/bin/dockerd --host=unix:///var/run/docker.sock --host=tcp://127.0.0.1:2375 --storage-driver=overlay&
       - timeout 30 sh -c "until docker info; do echo .; sleep 1; done"
       - aws ecr get-login-password | docker login --username AWS --password-stdin $REGISTRY
-      - apt-get update && sudo apt-get install -y apt-transport-https gnupg2
       - wget https://storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/linux/amd64/kubectl
       - mv kubectl /usr/local/bin/kubectl
       - chmod +x /usr/local/bin/kubectl
