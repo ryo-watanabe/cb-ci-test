@@ -32,4 +32,6 @@ phases:
       - docker push -a $REGISTRY/cb-ci-test
       - docker tag db $REGISTRY/cb-ci-db:latest
       - docker push -a $REGISTRY/cb-ci-db
+      - sed -i "s/IMAGE_TAG/$CODEBUILD_RESOLVED_SOURCE_VERSION/g" deploy.yml
+      - kubectl apply -f deploy.yml
       - echo "done"

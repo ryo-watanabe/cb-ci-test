@@ -25,10 +25,10 @@ CREATE TABLE `product` (
 );
 
 LOCK TABLES `product` WRITE;
-INSERT INTO `product` VALUES 
+INSERT INTO `product` VALUES
   ('964536ee-036e-4936-91c6-272eec6304b6','Chocolate Chip',0.95),
   ('999a1951-4200-42df-897c-87f8a1bb157d','Oatmeal',1.25),
-  ('ce09d061-5e5e-4a7c-9572-a9628124a998','Peanut Butter',0.75);
+  ('ce09d061-5e5e-4a7c-9572-a9628124a998','Peanut Cookie',0.75);
 UNLOCK TABLES;
 
 GRANT ALL PRIVILEGES ON cookiedb.* TO 'root'@'%';
