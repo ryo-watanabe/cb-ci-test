@@ -1,0 +1,12 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: cb-ci-test
+  labels:
+    app: cb-ci-test
+spec:
+  type: NodePort
+  ports:
+  - port: 3000
+  selector:
+    app: cb-ci-test
