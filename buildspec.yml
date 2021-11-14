@@ -2,15 +2,17 @@ version: 0.2
 phases:
   install:
     commands:
-      - echo ----start!---
+      - echo ----install start!---
       - apk add --no-cache curl
       - nohup /usr/local/bin/dockerd --host=unix:///var/run/docker.sock --host=tcp://127.0.0.1:2375 --storage-driver=overlay&
       - timeout -t 15 sh -c "until docker info; do echo .; sleep 1; done"
   pre_build:
     commands:
+      - echo ----build start!---
       - docker-compose -f docker-compose.yml build
   build:
     commands:
+      - echo ----integration test start!---
       - docker-compose -f docker-compose.yml up -d
       ### -r = retries; -i = interval; -k = keyword to search for ###
       - ./test/test-connection.sh -r 20 -i 3 -u http://web:3000
