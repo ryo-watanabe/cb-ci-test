@@ -21,6 +21,8 @@ phases:
     commands:
       - echo Build completed on `date`
       - echo Pushing the Docker image...
-      - docker tag $REGISTRY:$TAG app
-      - docker push $REGISTRY:$TAG
+      - docker tag app $REGISTRY:latest
+      - docker tag app $REGISTRY:$TAG
+      - docker tag app $REGISTRY:$CODEBUILD_RESOLVED_SOURCE_VERSION
+      - docker push -a $REGISTRY
       - echo "done"
