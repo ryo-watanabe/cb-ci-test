@@ -11,6 +11,7 @@ services:
     depends_on:
       - database
   database:
+    image: db
     build: ./mysql/
     container_name: database
     environment:

@@ -3,10 +3,15 @@ phases:
   install:
     commands:
       - echo ----install start!---
-      - apk add --no-cache curl
+      - apk add --no-cache curl wget
       - nohup /usr/local/bin/dockerd --host=unix:///var/run/docker.sock --host=tcp://127.0.0.1:2375 --storage-driver=overlay&
       - timeout 15 sh -c "until docker info; do echo .; sleep 1; done"
       - aws ecr get-login-password | docker login --username AWS --password-stdin $REGISTRY
+      - apt-get update && sudo apt-get install -y apt-transport-https gnupg2
+      - wget https://storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/linux/amd64/kubectl
+      - mv kubectl /usr/local/bin/kubectl
+      - chmod +x /usr/local/bin/kubectl
+      - aws eks --region $REGION update-kubeconfig --name $CLUSTER
   pre_build:
     commands:
       - echo ----build start!---
@@ -26,4 +31,6 @@ phases:
       - docker tag app $REGISTRY/cb-ci-test:$TAG
       - docker tag app $REGISTRY/cb-ci-test:$CODEBUILD_RESOLVED_SOURCE_VERSION
       - docker push -a $REGISTRY/cb-ci-test
+      - docker tag db $REGISTRY/cb-ci-db:latest
+      - docker push -a $REGISTRY/cb-ci-db
       - echo "done"
