@@ -2,7 +2,6 @@ version: 0.2
 phases:
   install:
     commands:
-      - apk add --no-cache curl wget
       - echo "----login to dev registry---"
       - aws ecr get-login-password | docker login --username AWS --password-stdin $REGISTRY
   pre_build:
