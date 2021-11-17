@@ -1,0 +1,27 @@
+version: 0.2
+phases:
+  install:
+    commands:
+      - apk add --no-cache curl wget
+      - echo "----login to dev registry---"
+      - aws ecr get-login-password | docker login --username AWS --password-stdin $REGISTRY
+  pre_build:
+    commands:
+      - echo "----pull images---"
+      - timeout 3000 sh -c "until docker pull $REGISTRY/cb-ci-test:$CODEBUILD_RESOLVED_SOURCE_VERSION; do echo .; sleep 30; done"
+      - docker tag $REGISTRY/cb-ci-test:$CODEBUILD_RESOLVED_SOURCE_VERSION app
+      - docker rmi $REGISTRY/cb-ci-test:$CODEBUILD_RESOLVED_SOURCE_VERSION
+  build:
+    commands:
+      - echo "----login to stg registry---"
+      - AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_STG
+      - AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_STG
+      - aws ecr get-login-password | docker login --username AWS --password-stdin $REGISTRY_STG
+  post_build:
+    commands:
+      - echo "----pushing images----"
+      - docker tag app $REGISTRY_STG/cb-ci-test:latest
+      - docker tag app $REGISTRY_STG/cb-ci-test:$TAG
+      - docker tag app $REGISTRY_STG/cb-ci-test:$CODEBUILD_RESOLVED_SOURCE_VERSION
+      - docker push -a $REGISTRY_STG/cb-ci-test
+      - echo "----done----"
