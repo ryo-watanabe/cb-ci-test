@@ -19,8 +19,8 @@ phases:
   post_build:
     commands:
       - echo "----pushing images----"
-      - docker tag app $REGISTRY_STG/cb-ci-test:latest
-      - docker tag app $REGISTRY_STG/cb-ci-test:$TAG
-      - docker tag app $REGISTRY_STG/cb-ci-test:$CODEBUILD_RESOLVED_SOURCE_VERSION
-      - docker push -a $REGISTRY_STG/cb-ci-test
+      - docker tag app $REGISTRY_STG/cb-ci-test-stg:latest
+      - docker tag app $REGISTRY_STG/cb-ci-test-stg:$TAG
+      - docker tag app $REGISTRY_STG/cb-ci-test-stg:$CODEBUILD_RESOLVED_SOURCE_VERSION
+      - docker push -a $REGISTRY_STG/cb-ci-test-stg
       - echo "----done----"
