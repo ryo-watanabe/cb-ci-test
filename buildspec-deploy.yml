@@ -1,0 +1,16 @@
+version: 0.2
+phases:
+  install:
+    commands:
+      - apk add --no-cache curl wget
+      - echo "----install & config kubectl---"
+      - wget https://storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/linux/amd64/kubectl
+      - mv kubectl /usr/local/bin/kubectl
+      - chmod +x /usr/local/bin/kubectl
+      - aws eks --region $REGION update-kubeconfig --name $CLUSTER
+  build:
+    commands:
+      - echo "----update deployment----"
+      - sed -i "s/IMAGE_TAG/$CODEBUILD_RESOLVED_SOURCE_VERSION/g" deploy.yml
+      - kubectl apply -f deploy.yml
+      - echo "----done----"
