@@ -8,6 +8,8 @@ phases:
       - timeout 30 sh -c "until docker info; do echo .; sleep 1; done"
       - echo "----login to registry---"
       - aws ecr get-login-password | docker login --username AWS --password-stdin $REGISTRY
+      - echo "----login to Docker Hub---"
+      - echo $DOCKERHUB_PASS | docker login -u $DOCKERHUB_USER --password-stdin
   pre_build:
     commands:
       - echo "----build images---"
