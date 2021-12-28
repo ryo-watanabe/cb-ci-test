@@ -11,5 +11,5 @@ jobs:
         uses: bicstone/backlog-notify@master
         env:
           PROJECT_KEY: TESTPROJECT1
-          API_HOST: githook.backlog.jp
+          API_HOST: githook.backlog.com
           API_KEY: ${{ secrets.BACKLOG_API_KEY }}
