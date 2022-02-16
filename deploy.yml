@@ -3,7 +3,6 @@ kind: Deployment
 metadata:
   labels:
     app: cb-ci-test
-    lastReloadDate: "LAST_RELOAD_DATE"
   name: cb-ci-test
 spec:
   replicas: 1
@@ -14,6 +13,7 @@ spec:
     metadata:
       labels:
         app: cb-ci-test
+        lastReloadDate: "LAST_RELOAD_DATE"
     spec:
       containers:
       - image: 030793377707.dkr.ecr.ap-northeast-1.amazonaws.com/cb-ci-test:IMAGE_TAG
