@@ -6,8 +6,6 @@ phases:
       - echo "----start docker---"
       - nohup /usr/local/bin/dockerd --host=unix:///var/run/docker.sock --host=tcp://127.0.0.1:2375 --storage-driver=overlay&
       - timeout 30 sh -c "until docker info; do echo .; sleep 1; done"
-      - echo "----login to registry---"
-      - aws ecr get-login-password | docker login --username AWS --password-stdin $REGISTRY
       - echo "----login to Docker Hub---"
       - echo $DOCKERHUB_PASS | docker login -u $DOCKERHUB_USER --password-stdin
   pre_build:
@@ -16,11 +14,8 @@ phases:
       - docker-compose -f docker-compose.yml build
   build:
     commands:
-      - echo "----pushing images----"
-      - docker tag app $REGISTRY/cb-ci-test:latest
-      - docker tag app $REGISTRY/cb-ci-test:$TAG
-      - docker tag app $REGISTRY/cb-ci-test:$CODEBUILD_RESOLVED_SOURCE_VERSION
-      - docker push -a $REGISTRY/cb-ci-test
-      - docker tag db $REGISTRY/cb-ci-db:latest
-      - docker push -a $REGISTRY/cb-ci-db
-      - echo "----done----"
+      - echo "----integration test---"
+      - docker-compose -f docker-compose.yml up -d
+      ### -r = retries; -i = interval; -k = keyword to search for ###
+      - sh ./test/test-connection.sh -r 20 -i 3 -u http://localhost:3000
+      - sh ./test/test-content.sh -r 20 -i 3 -u http://localhost:3000 -k 'Chocolate Chip'
