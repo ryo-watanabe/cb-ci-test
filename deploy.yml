@@ -3,6 +3,7 @@ kind: Deployment
 metadata:
   labels:
     app: cb-ci-test
+    lastReloadDate: "LAST_RELOAD_DATE"
   name: cb-ci-test
 spec:
   replicas: 1

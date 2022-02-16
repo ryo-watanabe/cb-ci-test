@@ -12,6 +12,7 @@ phases:
     commands:
       - echo "----update deployment----"
       - sed -i "s/IMAGE_TAG/$CODEBUILD_RESOLVED_SOURCE_VERSION/g" deploy.yml
+      - sed -i "s/LAST_RELOAD_DATE/$(date)/g" deploy.yml
       - kubectl apply -f deploy.yml
       - kubectl wait --for=condition=ready pod -l app=cb-ci-test
       - echo "----done----"
