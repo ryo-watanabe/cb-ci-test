@@ -1,23 +1,13 @@
-name: Create A File
-# This workflow is triggered on pushes to the repository.
+name: Echo Message
+# This workflow is triggered on webhook.
 on:
-  workflow_dispatch:
-    inputs:
-      msg:
-        type: string
-        required: false
-        description: "任意メッセージ"
+  repository_dispatch:
+    types: [echo_message]
 jobs:
-  createFile:
-    name: Create A File
+  echo_message:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: 1arp/create-a-file-action@0.4.5
-        with:
-          path: 'src'
-          isAbsolutePath: false
-          file: 'foo.bar'
-          content: |
-            Hello
-            World
+    steps:      
+      - name: Echo Message
+　　　　　　　　　　　　　　　　env:
+          MESSAGE: ${{ github.event.client_payload.message }}
+        run: echo ${{ env.MESSAGE }}
