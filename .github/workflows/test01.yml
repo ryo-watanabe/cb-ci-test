@@ -1,13 +1,14 @@
-name: Echo Message
-# This workflow is triggered on webhook.
+name: Repository Dispatch Example
+
 on:
   repository_dispatch:
     types: [echo_message]
+
 jobs:
-  echo_message:
+  handle_event:
     runs-on: ubuntu-latest
-    steps:      
-      - name: Echo Message
-　　　　 env:
-          MESSAGE: ${{ github.event.client_payload.message }}
-        run: echo ${{ env.MESSAGE }}
+    steps:
+    - name: Log Event Details
+      run: |
+        echo "Event Type: ${{ github.event.action }}"
+        echo "Payload Key: ${{ github.event.client_payload.message }}"
