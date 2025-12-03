@@ -1,10 +1,12 @@
 name: Create A File
 # This workflow is triggered on pushes to the repository.
 on:
-  push:
-    branches:
-      - master
-
+  workflow_dispatch:
+    inputs:
+      msg:
+        type: string
+        required: false
+        description: "任意メッセージ"
 jobs:
   createFile:
     name: Create A File
